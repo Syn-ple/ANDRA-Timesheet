@@ -79,7 +79,7 @@ sap.ui.define([
 					{	CategoriePresence:'PRES', Description:'Présence', Modifiable: 'X', EotpObligatoire : 'X' }
 /*					{	CategoriePresence:'1000', Description:'Formation HTT', Modifiable: 'X' , EotpObligatoire : ''},
 					{	CategoriePresence:'1001', Description:'Temps partiel', Modifiable: 'X' , EotpObligatoire : ''},
-					{	CategoriePresence:'1002', Description:'Grêves', Modifiable: 'X' , EotpObligatoire: ''},
+					{	CategoriePresence:'1002', Description:'Grèves', Modifiable: 'X' , EotpObligatoire: ''},
 					{	CategoriePresence:'1003', Description:'CET', Modifiable: 'X' , EotpObligatoire: ''},
 					{	CategoriePresence:'1004', Description:'Autres absences', Modifiable: 'X' , EotpObligatoire: ''},
 					{	CategoriePresence:'ABS', Description:'Congés statutaires', Modifiable: '' , EotpObligatoire: ''},
@@ -7151,7 +7151,7 @@ sap.ui.define([
 							.replace("$Awart",currentLine.Awart)
 							.replace("$Rproj",currentLine.Rproj);
 				MessageBox.show(
-					"Votre saisie va être définitivement supprimée, êtes-vous sûr ?", {
+					"Votre saisie va être définitivement supprimée, Êtes-vous sûr ?", {
 						icon: MessageBox.Icon.WARNING,
 						title: "Ma feuille de saisie des temps",
 						actions: [MessageBox.Action.YES, MessageBox.Action.NO],

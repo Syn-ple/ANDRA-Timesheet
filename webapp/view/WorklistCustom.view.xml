@@ -129,7 +129,7 @@
 									templateShareable: false
         						}"
         						change = ".onPresenceChange"
-        						valueStateText = "Catég. de présence non utilisable sur cette appliaction"
+        						valueStateText = "CatÃ©g. de prÃ©sence non utilisable sur cette appliaction"
 								>
 								
 								<core:Item 
@@ -152,7 +152,7 @@
 			showValueHelp="true"
 			suggest="handleSuggest" 
 			change = "zOnWBSChange"
-			placeholder = "Élement d'OTP"
+			placeholder = "Ã‰lement d'OTP"
 			showSuggestion="true"
 			showTableSuggestionValueHelp="false"
 			startSuggestion="1"
@@ -170,7 +170,7 @@
 				<Column
 					popinDisplay="Inline"
 					demandPopin="true">
-					<Label text="Élement d'OTP" />
+					<Label text="Ã‰lement d'OTP" />
 				</Column>
 				<Column
 					hAlign="Center"
@@ -192,7 +192,7 @@
 									
 <!-- 			<Input
 						enabled = "{controls>/overviewEditable}"
-						placeholder = "Élement d'OTP"
+						placeholder = "Ã‰lement d'OTP"
 						editable = "{json>AllowEdit}"
 						visible = "{path : 'json>Awart',formatter: '.formatter.isWBSEditableByCat'}"
 						
@@ -205,7 +205,7 @@
 						
 						change = "onWBSChange"
 						
-						valueStateText = "Veuillez saisir un élément d'OTP"
+						valueStateText = "Veuillez saisir un Ã©lÃ©ment d'OTP"
 						valueState = "{parts: [ {'json>Awart'},{'json>Rproj'} ],formatter: '.formatter.rprojValueState'}"
 						
 						showSuggestion="true"
