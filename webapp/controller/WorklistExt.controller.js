@@ -76,15 +76,15 @@ sap.ui.define([
 			};
 			var modelData = {
 				'ZV_CAT_PRES_VH':[
-					{	CategoriePresence:'PRES', Description:'Pr�sence', Modifiable: 'X', EotpObligatoire : 'X' }
+					{	CategoriePresence:'PRES', Description:'Présence', Modifiable: 'X', EotpObligatoire : 'X' }
 /*					{	CategoriePresence:'1000', Description:'Formation HTT', Modifiable: 'X' , EotpObligatoire : ''},
 					{	CategoriePresence:'1001', Description:'Temps partiel', Modifiable: 'X' , EotpObligatoire : ''},
-					{	CategoriePresence:'1002', Description:'Gr�ves', Modifiable: 'X' , EotpObligatoire: ''},
+					{	CategoriePresence:'1002', Description:'Grêves', Modifiable: 'X' , EotpObligatoire: ''},
 					{	CategoriePresence:'1003', Description:'CET', Modifiable: 'X' , EotpObligatoire: ''},
 					{	CategoriePresence:'1004', Description:'Autres absences', Modifiable: 'X' , EotpObligatoire: ''},
-					{	CategoriePresence:'ABS', Description:'Cong�s statutaires', Modifiable: '' , EotpObligatoire: ''},
+					{	CategoriePresence:'ABS', Description:'Congés statutaires', Modifiable: '' , EotpObligatoire: ''},
 					{	CategoriePresence:'AUT', Description:'Autres absences', Modifiable : '' , EotpObligatoire :  ''},
-					{	CategoriePresence:'CSS', Description:'Cong� sans solde', Modifiable : '' , EotpObligatoire : ''},
+					{	CategoriePresence:'CSS', Description:'Congé sans solde', Modifiable : '' , EotpObligatoire : ''},
 					{	CategoriePresence:'MAL', Description:'Maladie', Modifiable : '' , EotpObligatoire : ''}*/
 				],
 				'ZC_WBSElementVH':[
@@ -5236,7 +5236,7 @@ sap.ui.define([
 					
 /*							if(newLine.Awart === "PRES" &&  newLine.Rproj === '' ){
 								oControl.setValueState(sap.ui.core.ValueState.Error);
-								oControl.setValueStateText("Veuillez saisir un �l�ment d'OTP");
+								oControl.setValueStateText("Veuillez saisir un élément d'OTP");
 								oControl.focus();
 								isValid = false;
 							}*/
@@ -5310,7 +5310,7 @@ sap.ui.define([
 						
 						if(totals["Holiday"+i] === ""){
 							
-							that.addErrorMsg("Veuillez saisir un �l�ment d'OTP");
+							that.addErrorMsg("Veuillez saisir un élément d'OTP");
 							isValid = false;
 							break;
 						}
@@ -5416,6 +5416,7 @@ sap.ui.define([
 							if(temp.Awart !== ""){//&& temp.Day1.concat(temp.Day2,temp.Day3,temp.Day4,temp.Day5,temp.Day6,temp.Day7) !== "0000000"){
 								delete obj.properties.Workdate;
 								obj.properties.StartDate = that.startdate.toString("yyyy-MM-dd")+"T00:00:00";
+								obj.properties.EndDate = that.enddate.toString("yyyy-MM-dd")+"T00:00:00";
 								// delete obj.properties.EndDate;
 								delete obj.properties.OldRproj;
 								delete obj.properties.OldAwart;
@@ -6905,7 +6906,7 @@ sap.ui.define([
 
 			if (!sSelectedKey && sValue) {
 				oValidatedComboBox.setValueState("Error");
-				oValidatedComboBox.setValueStateText("Veuillez choisir une cat�gorie correcte");
+				oValidatedComboBox.setValueStateText("Veuillez choisir une catégorie correcte");
 			} else {
 				oValidatedComboBox.setValueState("None");
 			}
@@ -7150,7 +7151,7 @@ sap.ui.define([
 							.replace("$Awart",currentLine.Awart)
 							.replace("$Rproj",currentLine.Rproj);
 				MessageBox.show(
-					"Votre saisie va �tre d�finitivement supprim�e, �tes-vous s�r ?", {
+					"Votre saisie va être définitivement supprimée, êtes-vous sûr ?", {
 						icon: MessageBox.Icon.WARNING,
 						title: "Ma feuille de saisie des temps",
 						actions: [MessageBox.Action.YES, MessageBox.Action.NO],
@@ -8255,14 +8256,14 @@ sap.ui.define([
 			//oEvent.getSource().getParent().getCells()[1].setVisible(presenceEotpObligatoire=='X'?true:false);
 			if( presenceEotpObligatoire === 'X'){
 /*				eOtpInputField.setValueState(sap.ui.core.ValueState.Error);
-				eOtpInputField.setValueStateText("Veuillez saisir un �l�ment d'OTP");
+				eOtpInputField.setValueStateText("Veuillez saisir un élément d'OTP");
 				eOtpInputField.focus();*/
 			}else{
 				eOtpInputField.setValue("");
 			}
 /*			}else if( presenceModifiable !== 'X'){
 				oEvent.getSource().setValueState(sap.ui.core.ValueState.Error);
-				oEvent.getSource().setValueStateText("Cat�g. de pr�sence non utilisable sur cette appliaction");
+				oEvent.getSource().setValueStateText("Catég. de présence non utilisable sur cette appliaction");
 				oEvent.getSource().setSelected
 			}else{
 				oEvent.getSource().setValueState(sap.ui.core.ValueState.None);
@@ -8288,7 +8289,7 @@ sap.ui.define([
 			eOtpInputField.setValueState(sap.ui.core.ValueState.None);
 			if( presenceEotpObligatoire === 'X' && eOtpInputField.getValue() === ""){
 				eOtpInputField.setValueState(sap.ui.core.ValueState.Error);
-				eOtpInputField.setValueStateText("Veuillez saisir un �l�ment d'OTP");
+				eOtpInputField.setValueStateText("Veuillez saisir un élément d'OTP");
 				eOtpInputField.focus();
 			}
 /*			this.getModel("json").setProperty( 
@@ -8350,7 +8351,7 @@ sap.ui.define([
 /*		onAfterRendering: function(oEvent){
 			var oSmartNavigation = sap.ushell.Container.getService("SmartNavigation");
 			if( sap.ushell.Container.getService("UserInfo").getId() !== "FIORI_UT" ){
-				MessageBox.alert("La tuile est en d�veloppement", 
+				MessageBox.alert("La tuile est en développement", 
 					{
 	    				title: "Alert",                                      // default
 	    				onClose: function(oAction) {
