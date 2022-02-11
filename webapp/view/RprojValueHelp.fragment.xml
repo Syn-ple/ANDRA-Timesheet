@@ -1,0 +1,40 @@
+<core:FragmentDefinition
+	xmlns="sap.ui.comp.valuehelpdialog" xmlns:m="sap.m"
+	xmlns:fb="sap.ui.comp.filterbar" xmlns:core="sap.ui.core">
+	<ValueHelpDialog
+		title="Element d'OTP"
+		supportMultiselect="false"
+		ok="onValueHelpOkPress"
+		cancel="onValueHelpCancelPress"
+		afterClose="onValueHelpAfterClose"
+		supportRanges="false"
+		key="WBSElement"
+		descriptionKey="WBSDescription">
+		<filterBar>
+			<fb:FilterBar advancedMode="true"
+				search=".onFilterBarSearch">
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem groupName="__$INTERNAL$"
+						name="WBSElement" label="Element d'OTP" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input name="WBSElement" />
+						</fb:control>
+					</fb:FilterGroupItem>
+					<fb:FilterGroupItem groupName="__$INTERNAL$"
+						name="WBSDescription" label="Description" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input name="WBSDescription" />
+						</fb:control>
+					</fb:FilterGroupItem>
+
+					<fb:FilterGroupItem groupName="__$INTERNAL$"
+						name="ProjectDescription" label="Projet" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input name="ProjectDescription" />
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+			</fb:FilterBar>
+		</filterBar>
+	</ValueHelpDialog>
+</core:FragmentDefinition>

@@ -1,0 +1,584 @@
+<!--
+
+    Author: Youssef BOUIGUA ( Synvance ).
+
+-->
+<mvc:View controllerName="hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.controller.WorklistExt" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic"
+	xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+	xmlns:smartTable="sap.ui.comp.smarttable" xmlns:core="sap.ui.core" xmlns:uxap="sap.uxap" xmlns:common="hcm.fab.lib.common.controls"
+	xmlns:sf="sap.f"
+	xmlns:tbl="sap.ui.table">
+	<uxap:ObjectPageLayout id="ObjectPageLayout" subSectionLayout="TitleOnTop" enableLazyLoading="true" navigate="iconTabSelection"
+		useIconTabBar="true" showAnchorBarPopover="false" upperCaseAnchorBar="false" showFooter="{controls>/showFooter}">
+		<uxap:headerTitle>
+			<uxap:ObjectPageHeader id="mainPageHeaderTitle" objectTitle="{libCommon>/EmployeeName/FormattedName}"
+				objectSubtitle="{parts:['i18n>subTitle','libCommon>/EmployeePositionLongtext','libCommon>/EmployeePositionId','libCommon>/EmployeeNumber'],formatter: 'jQuery.sap.formatMessage'}">
+				<uxap:actions>
+					<!--<uxap:ObjectPageHeaderActionButton hideText="false" importance="Low"/>-->
+					<common:ConcurrentEmploymentObjectPageHeaderActionButton id="toolBtnCE" hideText="false" hideIcon="true"
+						assignmentChange="onAssignmentSwitch" assignmentsLoaded="onAssignmentsLoaded"/>
+					<Button id="switchProfileButton" text="{i18n>switchProfile}" tooltip="{i18n>switchProfile}" type="Transparent" press="onSwitchProfile"
+						visible="true" enabled="true"/>
+					<!--Allow adding actions to the worklist object page layout -->
+					<core:ExtensionPoint name="worklistPageActionsExtension"/>
+				</uxap:actions>
+				<core:ExtensionPoint name="worklistPageHeaderExtension"/>
+			</uxap:ObjectPageHeader>
+		</uxap:headerTitle>
+		<uxap:sections>
+			<uxap:ObjectPageSection selectedSubSection="true" id="overview" title="{i18n>overview}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>overview}">
+						<uxap:blocks>
+							<VBox class="sapUiMarginTiny">
+								<!-- 
+								<MessageStrip visible="{controls>/showOverviewMessage}" text="{i18n>overviewMessageStrip}" showCloseButton="true" type="Information"
+									showIcon="true" class="sapUiMediumMarginBottom">
+									<link><Link text="{i18n>clickHere}" press="navigateToTasks"/></link>
+								</MessageStrip>
+								 -->
+								<l:DynamicSideContent id="DynamicSideContent" class="sapUiDSCExplored sapUiContentPadding" sideContentFallDown="BelowXL"
+									sideContentPosition="Begin" containerQuery="true">
+									<l:sideContent class="sapUiResponsiveMargin" width="30%">
+										<l:VerticalLayout visible="{= ${device>/system/phone} ? false : true}">
+											<u:Calendar id="idCalendar" intervalSelection="true" months="2" visible="{= ${device>/system/phone} ? false : true}"
+												select="handleCalendarSelect" minDate="{TimeEntries>/0/CaleNavMinDate}" maxDate="{TimeEntries>/0/CaleNavMaxDate}"
+												firstDayOfWeek="{path:'TimeEntries>/0/FirstDayOfWeek',formatter:'.formatter.dayOfWeek'}" startDateChange="onStartDateChange"/>
+											<u:CalendarLegend id="legend" visible="{= ${device>/system/phone} ? false : true}">
+												<u:items>
+													<u:CalendarLegendItem text="{i18n>timeCompleted}" type="Type08"/>
+													<u:CalendarLegendItem text="{i18n>timeMissing}" type="Type01"/>
+													<u:CalendarLegendItem text="{i18n>timeRejected}" type="Type03"/>
+													<!--Allow adding further items to the calendar legend -->
+													<core:ExtensionPoint name="overviewCalendarLegendExtension"/>
+												</u:items>
+											</u:CalendarLegend>
+											<!--<u:CalendarDateInterval days="14" select="handleCalendarSelect" visible="{= ${device>/system/phone} ? true :false}"/>-->
+										</l:VerticalLayout>
+										<l:VerticalLayout visible="{= ${device>/system/phone} ? true : false}">
+										<u:CalendarDateInterval id="mCalendar" minDate="{path:'TimeEntries>/0/CaleNavMinDate',formatter:'.formatter.getUTCDate'}"
+											maxDate="{path:'TimeEntries>/0/CaleNavMaxDate',formatter:'.formatter.getUTCDate'}" startDateChange="onStartDateChange"
+											select="handleCalendarSelect" width="100%" visible="{= ${device>/system/phone} ? true :false}"/>
+										<u:CalendarLegend id="mlegend" visible="{= ${device>/system/phone} ? true : false}">
+												<u:items>
+													<u:CalendarLegendItem text="{i18n>timeCompleted}" type="Type08"/>
+													<u:CalendarLegendItem text="{i18n>timeMissing}" type="Type01"/>
+													<u:CalendarLegendItem text="{i18n>timeRejected}" type="Type03"/>
+													<!--Allow adding further items to the calendar legend -->
+													<core:ExtensionPoint name="overviewCalendarLegendExtension"/>
+												</u:items>
+											</u:CalendarLegend>
+										</l:VerticalLayout>
+									</l:sideContent>
+									<l:mainContent width="70%">
+										<l:HorizontalLayout>
+											
+											<Table id="timeTable" growing="true" noDataText="{i18n>noTimeEntries}" 
+											alternateRowColors = "true"
+												selectionChange="onTimeTableSelect"
+												updateFinished="onTimeUpdateFinished"
+												delete="onTimeDelete"
+												growingThreshold="50"
+												mode="{controls>/onEdit}" headerText="{i18n>timesheetRecords}"
+												items="{
+													path:'json>/TimeEntries', 
+													templateShareable:false
+												}"
+												enableBusyIndicator="true">
+												<headerToolbar>
+													<OverflowToolbar id="timeOverflow">
+														<Button icon="sap-icon://add" press="onAddItem" enabled = "{controls>/overviewEditable}"></Button>
+														<ToolbarSpacer/>
+														<Button icon="sap-icon://navigation-left-arrow" press="setPreviousWeek"></Button>
+														<Label text="Semaine: {json>/WeekNumber}" />
+														<ObjectStatus active="false" 
+														text="{ parts:[{path: 'json>/CatsStatus'}] , formatter:'.catsstatus'}" 
+														state="{ parts:[{path: 'json>/CatsStatus'}] , formatter:'.formatter.catsstatus_output'}" />
+														<Button icon="sap-icon://navigation-right-arrow" press="setNextWeek"></Button>
+														<ToolbarSpacer/>
+														<Button id="timeDuplicateSaveButton" text="{i18n>duplicateTimeEntry}" tooltip="{i18n>duplicateTimeEntry}" type="Transparent"
+															press="onDuplicateTask" visible="false"/>
+														<!--enabled="{controls>/duplicateTaskEnable}"/>-->
+														<Button id="duplicateWeekButton" text="{i18n>duplicateWeek}" tooltip="{i18n>duplicateWeek}" type="Transparent" press="onDuplicateWeek"
+														visible="{controls>/overviewEditable}" enabled="{controls>/duplicateWeekEnabled}"/>
+														<Button id="timeEditButton" text="{i18n>enterRecords}" tooltip="{i18n>enterRecords}" type="Transparent" press="onEdit"
+															visible="{controls>/overviewEdit}" enabled="{controls>/overviewEditEnabled}"/>
+														<Button icon="sap-icon://action-settings" press="onPersButtonPressed" enabled="{controls>/overviewEditEnabled}" visible="false"/>
+													</OverflowToolbar>
+												</headerToolbar>
+												<columns>
+													<core:Fragment fragmentName="hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.view.Columns" type="XML" />
+												</columns>
+												<items>
+<!-- <core:Fragment fragmentName="hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.view.Cells" type="XML" /> -->
+
+	<ColumnListItem id = "timeListItem" highlight = "{path : 'json>Weekstatus',formatter: '.formatter.statusHighlight'}">
+		<cells>
+			<Select
+								valueState = "{parts : [
+								{ path: 'json>AllowEdit' },
+								{ path: 'json>Awart' } 
+								] ,formatter: '.formatter.awartValueState'}"
+								forceSelection="false"
+								resetOnMissingKey = "false"
+								enabled="{controls>/overviewEditable}"
+								editable='{json>AllowEdit}'
+								selectedKey="{json>Awart}"
+								items="{
+									path : 'json>/ZV_CAT_PRES_VH',
+									templateShareable: false
+        						}"
+        						change = ".onPresenceChange"
+        						valueStateText = "Catég. de présence non utilisable sur cette appliaction"
+								>
+								
+								<core:Item 
+									key		=	'{json>CategoriePresence}'
+									text	=	'{json>CategoriePresence} - {json>Description}'
+								/>
+								
+			</Select>
+									<!-- textFormatter: this.formatter.EOTP_OUTPUT.bind(this), -->
+									<!-- 						value = "{= ${json>Rproj}  === '00000000' ? '' : ${json>Rproj} }" -->
+									
+			<Input
+			value = "{json>Rproj}"
+			enabled = "{controls>/overviewEditable}"
+			editable = "{json>AllowEdit}"
+			visible = "{path : 'json>Awart',formatter: '.formatter.isWBSEditableByCat'}"
+			valueHelpRequest = "onWBSValueHelpRequested"
+			suggestionItemSelected = "onSelectSuggestion"
+			filterSuggests = "false"
+			showValueHelp="true"
+			suggest="handleSuggest" 
+			change = "zOnWBSChange"
+			placeholder = "Élement d'OTP"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			startSuggestion="1"
+			maxSuggestionWidth="90%"
+			suggestionRows="{
+			path: 'json>/ZC_WBSElementVH',
+			sorter: { path: 'json>Favoris', descending: true }
+			}">
+			<suggestionColumns>
+				<Column
+					popinDisplay="Inline"
+					demandPopin="true">
+					<Label text="Favoris" />
+				</Column>
+				<Column
+					popinDisplay="Inline"
+					demandPopin="true">
+					<Label text="Élement d'OTP" />
+				</Column>
+				<Column
+					hAlign="Center"
+					popinDisplay="Inline"
+					demandPopin="true"
+					minScreenWidth="Tablet">
+					<Label text="Description" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<ToggleButton icon="sap-icon://favorite" enabled="true" pressed="{ path: 'json>Favoris', formatter : '.formatter.boolean' }" press="onFavorisPress" />
+					<Label text="{json>WBSElement}" />
+					<Label text="{json>WBSDescription}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>									
+									
+<!-- 			<Input
+						enabled = "{controls>/overviewEditable}"
+						placeholder = "Élement d'OTP"
+						editable = "{json>AllowEdit}"
+						visible = "{path : 'json>Awart',formatter: '.formatter.isWBSEditableByCat'}"
+						
+						valueHelpRequest = "onWBSValueHelpRequested"
+						showValueHelp = "true"
+						
+						value = "{json>Rproj}"
+						
+						suggest="handleSuggest" 
+						
+						change = "onWBSChange"
+						
+						valueStateText = "Veuillez saisir un élément d'OTP"
+						valueState = "{parts: [ {'json>Awart'},{'json>Rproj'} ],formatter: '.formatter.rprojValueState'}"
+						
+						showSuggestion="true"
+						autocomplete="true"
+						startSuggestion="0"
+						
+						suggestionItems="{
+							path: 'json>/ZC_WBSElementVH',
+							sorter: { path: 'json>WBSElement' },
+							length: 5
+						}">
+						
+						<suggestionItems>
+							<core:Item text = "{json>WBSElement}"/>
+						</suggestionItems>
+			</Input> -->
+			<Input
+						type = "sap.m.InputType.Number"
+						maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day1',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+						maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day2',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day3',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day4',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day5',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day6',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day7',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+<!-- 			<Button		
+						icon = "{path: 'json>LongText',formatter: '.formatter.longtextButtons'}"
+						visible = "{path : 'json>Weekstatus',formatter: '.formatter.isRowDeletable'}"
+						enabled = "{controls>/overviewEditable}"
+						type = "sap.m.ButtonType.Transparent"
+						press = "longtextPopover"
+			/> -->
+			
+			<Button		
+						icon = "sap-icon://sys-cancel"
+						visiblee = "{json>AllowEdit}"
+						visible = "{parts: [ {path : 'json>AllowEdit'},{path : 'json>Weekstatus'} ] ,formatter: '.formatter.removeCheck'}"
+						type = "sap.m.ButtonType.Reject"
+						enabled = "{controls>/overviewEditable}"
+						press = "removePopover"
+			/>
+
+<!-- 						visible = "{path : 'json>Weekstatus' ,formatter: '.formatter.isRowDeletable'}" -->
+	
+		</cells>
+	</ColumnListItem>
+
+
+												</items>
+											</Table>
+											
+										</l:HorizontalLayout>
+									</l:mainContent>
+								</l:DynamicSideContent>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection visible="false" id="todolist" title="{parts:['i18n>todolistNew','TodoList>/length'],formatter: 'jQuery.sap.formatMessage'}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{parts:['i18n>todolistNew','TodoList>/length'],formatter: 'jQuery.sap.formatMessage'}">
+						<uxap:blocks>
+							<VBox>
+								<Table id="idToDoList" noDataText="{i18n>noToDoListItems}" growing="true" growingThreshold="50" mode="None"
+									items="{path:'TodoList>/', sorter: { path: 'TimeEntryDataFields/WORKDATE', descending: false }}" enableBusyIndicator="true">
+									<headerToolbar>
+										<OverflowToolbar id="idTodo">
+											<Title text="{parts:['i18n>toDoListItems','TodoList>/length'],formatter: 'jQuery.sap.formatMessage'}" level="H2"/>
+											<ToolbarSpacer/>
+											<Button id="editButtonTodo" text="{i18n>enterRecords}" tooltip="{i18n>enterRecords}" type="Transparent"
+												visible="{controls>/editTodoVisibility}" press="onToDoEdit"/>
+											<Button icon="sap-icon://action-settings" press="onPersTodoButtonPressed"/>
+											<!--Allows you to add buttons to the To Do List table toolbar-->
+											<core:ExtensionPoint name="todolistTableToolbarExtension"/>
+										</OverflowToolbar>
+									</headerToolbar>
+									<columns>
+										<Column mergeDuplicates="true" id="todoDate" hAlign="Begin">
+											<Text text="{i18n>date}"/>
+										</Column>
+										<Column id="todoEntered" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+											<Text text="{parts:['i18n>record','i18n>recorded','i18n>target'],formatter: 'jQuery.sap.formatMessage'}"/>
+										</Column>
+										<Column hAlign="Center" id="todoMissing" minScreenWidth="Desktop" demandPopin="true">
+											<Text text="{i18n>missingHours}"/>
+										</Column>
+										<Column hAlign="Center" id="todoAssignment" width="{= ${device>/system/phone} ? '70%' : '20%'}" minScreenWidth="Desktop" demandPopin="true">
+											<Text text="{i18n>assign}"/>
+										</Column>
+										<Column id="todoHours" minScreenWidth="Desktop" width="{= ${device>/system/phone} ? '' : '20%'}" demandPopin="true" hAlign="Center">
+											<Text text="{i18n>enteredColumn}"/>
+										</Column>
+										<Column id="todoStartTime" hAlign="Center" width="{= ${device>/system/phone} ? '' : '10%'}"
+											visible="{=${controls>/clockTimeVisible} ? true:false}" minScreenWidth="Desktop" demandPopin="true">
+											<Text text="{i18n>startTime}"/>
+										</Column>
+										<Column id="todoEndTime" hAlign="Center" width="{= ${device>/system/phone} ? '' : '10%'}"
+											visible="{=${controls>/clockTimeVisible} ? true:false}" minScreenWidth="Desktop" demandPopin="true">
+											<Text text="{i18n>endTime}"/>
+										</Column>
+										<Column id="todoStatus" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+											<Text text="{i18n>status}"/>
+										</Column>
+										<Column id="todoComments" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+											<Text text="{i18n>comments}"/>
+										</Column>
+										<!--<Column minScreenWidth="Tablet" width="10%" id="todoButton" demandPopin="true" popinDisplay="WithoutHeader"-->
+										<!--	visible="{= ${device>/system/phone} ? false : true}">-->
+										<!--	<Text text="{i18n>sendForApproval}" visible="false"/>-->
+										<!--</Column>-->
+										<Column id="add" hAlign="{= ${device>/system/phone} ? 'End' : 'Begin'}">
+											<Text text="{i18n>addDelete}" visible="false"/>
+										</Column>
+										<!--Allows you to add columns to the To Do List table -->
+										<core:ExtensionPoint name="todolistTableColumnsExtension"/>
+										<!--<Column id="edit" width="5%" hAlign="End" visible="{= ${device>/system/phone} ? true : false}">-->
+										<!--	<Text visible="{= ${device>/system/phone} ? false : true}"/>-->
+										<!--</Column>-->
+									</columns>
+									<items>
+										<ColumnListItem >
+											<cells>
+												<Text text="{path: 'TodoList>TimeEntryDataFields/WORKDATE', type: 'sap.ui.model.type.Date', formatOptions: { style: 'full' }}"/>
+												<!--<ObjectStatus text="{parts:[{path:'TodoList>total'},{path:'TodoList>target'}], formatter:'.formatter.concatStrings'}"-->
+												<!--	state="{path:'TodoList>TimeEntryDataFields/STATUS', formatter:'.formatter.TodoState'}"/>-->
+												<ObjectStatus
+													text="{parts:[{path:'TodoList>total', type: 'sap.ui.model.odata.type.Decimal', formatOptions: { parseAsString: true, decimals: 2, maxFractionDigits: 2, minFractionDigits: 0 }, constraints: { precision: 4, scale: 2, minimum: '0', maximum: '10000' }},{path:'TodoList>target', type: 'sap.ui.model.odata.type.Decimal', formatOptions: { parseAsString: true, decimals: 2, maxFractionDigits: 2, minFractionDigits: 0 }, constraints: { precision: 4, scale: 2, minimum: '0', maximum: '10000' }}], formatter:'.formatter.concatStrings'}"/>
+												<ObjectStatus
+													text="{path:'TodoList>currentMissing' , type: 'sap.ui.model.odata.type.Decimal', formatOptions: { parseAsString: true, decimals: 2, maxFractionDigits: 2, minFractionDigits: 0 }, constraints: { precision: 4, scale: 2, minimum: '0', maximum: '10000' }}"/>
+												<ObjectIdentifier title="{TodoList>AssignmentName}"/>
+												<!--<ObjectStatus text="{path:'TodoList>missing'}" state="{path:'TodoList>TimeEntryDataFields/status', formatter:'.formatter.TodoState'}"/>-->
+												<!--<ObjectStatus text="{path:'TodoList>TimeEntryDataFields/BEGUZ'}" visible="{=${controls>/clockTimeVisible} ? true:false}"/>-->
+												<!--<ObjectStatus text="{path:'TodoList>TimeEntryDataFields/ENDUZ'}" visible="{=${controls>/clockTimeVisible} ? true:false}"/>-->
+												<!--<ObjectStatus text="{path:'TodoList>TimeEntryDataFields/CATSHOURS'}"/>-->
+												<ObjectNumber
+													number="{parts:[{path:'TodoList>TimeEntryDataFields/CATSHOURS'},{path:'TodoList>TimeEntryDataFields/CATSQUANTITY'},{path:'TodoList>TimeEntryDataFields/CATSAMOUNT'}],formatter: '.formatter.calHoursQuanAmount'}"
+													class="sapUiSmallMarginBottom"
+													unit="{parts:[{path:'TodoList>TimeEntryDataFields/UNIT'},{path:'TodoList>TimeEntryDataFields/CATSHOURS'}],formatter:'.formatter.getUnitTexts'}"/>
+												<ObjectStatus text="{path:'TodoList>TimeEntryDataFields/BEGUZ', formatter:'.formatter.formatTime'}"
+													visible="{=${controls>/clockTimeVisible} ? true:false}"/>
+												<ObjectStatus text="{path:'TodoList>TimeEntryDataFields/ENDUZ', formatter:'.formatter.formatTime'}"
+													visible="{=${controls>/clockTimeVisible} ? true:false}"/>
+												<ObjectStatus text="{path:'TodoList>TimeEntryDataFields/STATUS',formatter:'.formatter.status'}"
+													state="{path:'TodoList>TimeEntryDataFields/STATUS', formatter:'.formatter.TodoState'}"/>
+												<Button type="Transparent" icon="{ path: 'TodoList>TimeEntryDataFields/LONGTEXT', formatter: '.formatter.longtextButtons'}"
+													visible="{parts:[{path:'TimeData>TimeEntryDataFields/LONGTEXT'},{path:'TimeData>RejReasondesc'}],formatter:'.formatter.visibility'}"
+													press="displayTodoLongtextPopover"/>
+												<!--<Text text=""/>-->
+												<Text text=""/>
+												<!--Allows you to add cells to the rows of To Do List table -->
+												<core:ExtensionPoint name="todolistTableRowsExtension"/>
+												<!--<Button type="Transparent" icon="sap-icon://edit" visible="{= ${device>/system/phone} ? true : false}" press="onEditTodoListMobile"/>-->
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<!--</IconTabFilter>-->
+			<!--<IconTabFilter text="{i18n>assignmen}" key="tasks">-->
+			<uxap:ObjectPageSection visible="false" id="tasks" title="{i18n>assignmen}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>assignmen}">
+						<uxap:blocks>
+							<VBox>
+								<!--<Button icon="sap-icon://message-information" type="Transparent" press="onShowAssignmentsMessage"-->
+								<!--	visible="{=${controls>/showAssignmentsMessage} ? false: true}"/>-->
+								<MessageStrip visible="{controls>/showAssignmentsMessage}" text="{i18n>overviewMessageStrip}" showCloseButton="true" type="Information"
+									showIcon="true" class="sapUiMediumMarginBottom"></MessageStrip>
+								<Table id="idTasks" growing="true" noDataText="{i18n>overviewMessageStrip}" growingThreshold="{= ${device>/system/phone} ? 10 : 20}"
+									selectionChange="onTaskSelection" mode="MultiSelect" items="{path:'TaskFields>/',factory:'.dynamicBindingRows'}"
+									columns="{path:'ProfileFields>/', factory:'.dynamicBindingColumns'}" enableBusyIndicator="true">
+									<headerToolbar>
+										<OverflowToolbar id="idAssignmentOverflow">
+											<!--<Toolbar>-->
+											<SegmentedButton selectedKey="Yes">
+												<items>
+													<SegmentedButtonItem text="{parts:['i18n>allNumber','Tasks>/length'],formatter: 'jQuery.sap.formatMessage'}"
+														tooltip="{parts:['i18n>allNumber','Tasks>/length'],formatter: 'jQuery.sap.formatMessage'}" key="Yes" press="onTaskAll"/>
+													<SegmentedButtonItem text="{parts:['i18n>active','controls>/tasksActiveLength'],formatter: 'jQuery.sap.formatMessage'}"
+														tooltip="{parts:['i18n>active','controls>/tasksActiveLength'],formatter: 'jQuery.sap.formatMessage'}" press="onTaskActive"/>
+													<SegmentedButtonItem text="{parts:['i18n>inactive','controls>/tasksInactiveLength'],formatter: 'jQuery.sap.formatMessage'}"
+														tooltip="{parts:['i18n>inactive','controls>/tasksInactiveLength'],formatter: 'jQuery.sap.formatMessage'}" press="onTaskInactive"/>
+												</items>
+											</SegmentedButton>
+											<ToolbarSpacer/>
+											<!--<DateRangeSelection width="20%" dateValue="{path:'/dateValueDRS2'}" secondDateValue="{path:'/secondDateValueDRS2'}"-->
+											<!--	minDate="{path:'/dateMinDRS2'}" maxDate="{path:'/dateMaxDRS2'}" change="handleDateChange"/>-->
+											<SearchField width="20%" search="handleSearchAssignments"/>
+											<MenuButton text="{i18n>create}">
+												<menu>
+													<Menu itemSelected="onMenuAction">
+														<items>
+															<MenuItem text="{i18n>assign}" key="selectFromAssignment"/>
+															<MenuItem text="{i18n>assignGroup}" key="selectFromGroups"/>
+														</items>
+													</Menu>
+												</menu>
+											</MenuButton>
+											<!--<Button id="createGroupAssignment" text="{i18n>createGroup}" tooltip="{i18n>createGroup}" type="Transparent" press="onCreateGroup"/>-->
+											<!--<Button id="importWorklistButton" text="{i18n>import}" tooltip="{i18n>import}" type="Transparent" press="onImportWorklist"-->
+											<!--	visible="{controls>/importWorklist}"/>-->
+											<MenuButton text="{i18n>import}">
+												<menu>
+													<Menu itemSelected="onMenuAction">
+														<items>
+															<MenuItem text="{i18n>fromWorklist}" visible="{controls>/importWorklist}" key="selectFromWorklist"/>
+															<MenuItem text="{i18n>fromAdminAssignments}" key="selectFromAdminlist"/>
+														</items>
+													</Menu>
+												</menu>
+											</MenuButton>
+											<Button id="copyButtonAssignment" text="{i18n>copy}" tooltip="{i18n>copy}" type="Transparent" press="onCopyTask"
+												enabled="{controls>/taskCopy}"/>
+											<!--<Button id="saveButtonAssignment" text="{i18n>edit}" tooltip="{i18n>edit}" type="Transparent" press="onTaskEdit"-->
+											<!--	enabled="{controls>/taskEdit}"/>-->
+											<Button id="deleteButtonAssignment" text="{i18n>delete}" tooltip="{i18n>delete}" type="Transparent" press="onTaskDeleteConfirm" enabled="{controls>/taskDelete}"/> <!--Note 2890326  -->
+											<!--<Button id="editButtonAssignment" icon="sap-icon://add" type="Transparent" press="onTaskCreate"/>-->
+											<Button id="filterGroupAssignment" icon="sap-icon://filter" type="Transparent" press="handleDateChange"/>
+											<Button icon="sap-icon://action-settings" press="onPersTaskButtonPressed"/>
+											<!--Allows you to add buttons to the Assignments table toolbar-->
+											<core:ExtensionPoint name="assignmentsTableToolbarExtension"/>
+											<!--</Toolbar>-->
+										</OverflowToolbar>
+									</headerToolbar>
+								</Table>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<!--</IconTabFilter>-->
+			<!--<IconTabFilter text="{i18n>assignmenGroups}" key="groups">-->
+			<uxap:ObjectPageSection visible="false" id="groups" title="{i18n>assignmenGroups}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>assignmenGroups}">
+						<uxap:blocks>
+							<VBox>
+								<!--<Button icon="sap-icon://message-information" type="Transparent" press="onShowGroupMessage"-->
+								<!--	visible="{=${controls>/showGroupMessage} ? false: true}"/>-->
+								<MessageStrip visible="{controls>/showGroupMessage}" text="{i18n>groupMessagestrip}" showCloseButton="true" type="Information"
+									showIcon="true" class="sapUiMediumMarginBottom"></MessageStrip>
+								<Table id="idGroups" growing="true" growingThreshold="10" noDataText="{i18n>groupMessagestrip}" selectionChange="onGroupSelection"
+									mode="MultiSelect" items="{AssignmentGroups>/}" enableBusyIndicator="true">
+									<headerToolbar>
+										<OverflowToolbar>
+											<ToolbarSpacer/>
+											<SearchField width="{= ${device>/system/phone} ? '50%' : '20%' }" class="sapUiSmallMargin" search="handleSearchGroups"/>
+											<Button id="createGroup" text="{i18n>create}" tooltip="{i18n>create}" type="Transparent" press="onCreateGroup"/>
+											<!--<Button text="{i18n>edit}" tooltip="{i18n>edit}" type="Transparent" press="onEditGroup" enabled="{controls>/EditGroup}"/>-->
+											<Button text="{i18n>delete}" tooltip="{i18n>delete}" type="Transparent" press="onGroupDeleteConfirm" enabled="{controls>/DeleteGroup}"/> <!--Note 2890326 -->
+											<!--Allows you to add buttons to the Assignment Groups table toolbar-->
+											<core:ExtensionPoint name="assignmentGroupsTableToolbarExtension"/>
+										</OverflowToolbar>
+									</headerToolbar>
+									<columns>
+										<Column mergeDuplicates="true" id="groupName" hAlign="Begin">
+											<Text text="{i18n>name}"/>
+										</Column>
+										<!--<Column hAlign="Center" id="description" minScreenWidth="Tablet" demandPopin="true">-->
+										<!--	<Text text="{i18n>description}"/>-->
+										<!--</Column>-->
+										<Column id="numberOfAssignments" hAlign="End">
+											<Text text="{i18n>numberOfAssignments}"/>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Navigation" press="onDisplayGroup">
+											<cells>
+												<Text text="{AssignmentGroups>groupName}"/>
+												<!--<Text text=""/>-->
+												<!--<Text text=""/>-->
+												<Text text="{AssignmentGroups>count}"/>
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<!--Allows you to add icon tab bar sections to the worklist page-->
+			<core:ExtensionPoint name="worklistTabSectionExtension"/>
+		</uxap:sections>
+		<uxap:footer>
+			<OverflowToolbar>
+				<Button icon="sap-icon://message-popup" text="{message>/length}" type="Emphasized" visible="{= !!${message>/length}}"
+					tooltip="{i18n>messagePopup}" press="handleMessagePopover" id="msgsBtn"/>
+				<ToolbarSpacer/>
+				<Button type="Emphasized" text="{i18n>save}" tooltip="{i18n>save}" enabled="{json>/AllowRelease}" press="onSubmitDraft" visible="true"/>
+				<Button type="Emphasized" text="{i18n>submit}" tooltip="{i18n>submit}" enabled="{json>/AllowRelease}" press="onSubmitAproval"
+					visible="{controls>/sendForApproval}"/>
+				<Button text="{i18n>cancel}" tooltip="{i18n>cancel}" type="Transparent" press="onCancelConfirm" visible="{controls>/overviewCancel}"/>
+				<Button text="{i18n>submit}" tooltip="{i18n>submit}" type="Emphasized" enabled="{controls>/todoDataChanged}" press="onToDoSubmit"
+					visible="{controls>/todoDone}"/>
+				<Button text="{i18n>cancel}" tooltip="{i18n>cancel}" type="Transparent" press="onTodoCancelConfirm" visible="{controls>/todoCancel}"/>
+				<!--Allows you to add buttons to the worklist page footer bar-->
+				<core:ExtensionPoint name="worklistFooterExtension"/>
+			</OverflowToolbar>
+		</uxap:footer>
+	</uxap:ObjectPageLayout>
+</mvc:View>

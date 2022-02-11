@@ -1,0 +1,129 @@
+{
+	"_version": "1.4.0",
+	"sap.app": {
+		"_version": "1.4.0",
+		"id": "hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.1.90"
+		},
+		"title": "{{appTitle}}",
+		"ach": "PA-FIO-TS",
+		"dataSources": {
+			"mainService": {
+				"uri": "/sap/opu/odata/sap/ZHCMFAB_TIMESHEET_MAINT_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/zmetadata.xml"
+				}
+			},
+			"CEService": {
+				"uri": "/sap/opu/odata/sap/HCMFAB_COMMON_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"CustomerService":{
+				"uri": "/sap/opu/odata/sap/ZFIORI_TIMESHEET_SRV",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			},
+			"ZC_HCMFAB_FAV_CDS":{
+				"uri": "/sap/opu/odata/sap/ZC_HCMFAB_FAV_CDS",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
+		}
+	},
+	"sap.fiori": {
+		"registrationIds": [
+			"F3074"
+		],
+		"archeType": "transactional"
+	},
+	"sap.ui": {
+		"_version": "1.4.0",
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://create-entry-time",
+			"favIcon": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"_version": "1.4.0",
+		"dependencies": {
+			"minUI5Version": "1.44.47"
+		},
+		"config": {
+        	"fullWidth": true
+    	},
+		"models": {
+			"ZC_HCMFAB_FAV_CDS":{
+				"dataSource": "ZC_HCMFAB_FAV_CDS",
+				"settings": {
+					"defaultBindingMode": "TwoWay"
+				}
+			},
+			"VH":{
+				"dataSource": "CustomerService",
+				"settings": {
+					"defaultBindingMode": "TwoWay"
+				}
+			},
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.i18n.i18n"
+				}
+			}
+		},
+		"extends": {
+			"component": "hcm.fab.mytimesheet",
+			"extensions": {
+				"sap.ui.viewReplacements": {
+					"hcm.fab.mytimesheet.view.Worklist": {
+						"viewName": "hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.view.WorklistCustom",
+						"type": "XML"
+					}
+				},
+				"#sap.ui.controllerExtensions": {
+					"hcm.fab.mytimesheet.controller.Worklist": {
+						"controllerName": "hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.controller.WorklistCustom"
+					}
+				},
+				"sap.ui.controllerReplacements": {
+					"hcm.fab.mytimesheet.controller.Worklist": {
+						"controllerName": "hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension.controller.WorklistExt"
+					}
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"resources": {
+		  "css": [
+			{
+			  "uri": "css/custom.css"
+			}
+		  ]
+		}
+	}
+}

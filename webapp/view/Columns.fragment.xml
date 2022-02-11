@@ -1,0 +1,124 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core" >
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '15%'}" 
+		mergeDuplicates="true"
+		id="Awart" minScreenWidth="Phone" 
+		demandPopin="true"
+		visible="true">
+		<Text text="{i18n>Awart}"/>
+		<footer>
+			<Label text = "Total: "/>
+		</footer>
+	</Column>
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '40%'}" 
+		mergeDuplicates="true"
+		id="Rproj" minScreenWidth="Phone" 
+		demandPopin="true"
+		visible="true">
+		<Text text="{i18n>Rproj}"/>
+	</Column>
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day1" minScreenWidth="Phone" 
+		demandPopin="true"
+		styleClass="{totals>/Holiday1}"
+		visible="true">
+		<Text text="{i18n>Day1_S}"/>
+		<footer>
+			<ObjectNumber id="onDay1" number = "{totals>/Day1}"/>
+		</footer>
+	</Column>
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day2" minScreenWidth="Phone" 
+		demandPopin="true"
+		styleClass="{totals>/Holiday2}"
+		visible="true">
+		<Text text="{i18n>Day2_S}"/>
+		<footer><ObjectNumber  id="onDay2" number = "{totals>/Day2}"/></footer>
+	</Column>
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day3" minScreenWidth="Phone" 
+		demandPopin="true"
+		styleClass="{totals>/Holiday3}"
+		visible="true">
+		<Text text="{i18n>Day3_S}"/>
+		<footer><ObjectNumber  id="onDay3" number = "{totals>/Day3}"/></footer>
+	</Column>
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day4" minScreenWidth="Phone" 
+		demandPopin="true"
+		styleClass="{totals>/Holiday4}"
+		visible="true">
+		<Text text="{i18n>Day4_S}"/>
+		<footer><ObjectNumber  id="onDay4" number = "{totals>/Day4}"/></footer>
+	</Column>
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day5" minScreenWidth="Phone" 
+		demandPopin="true"
+		styleClass="{totals>/Holiday5}"
+		visible="true">
+		<Text text="{i18n>Day5_S}"/>
+		<footer><ObjectNumber  id="onDay5" number = "{totals>/Day5}"/></footer>
+	</Column>
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day6" minScreenWidth="Phone" 
+		demandPopin="true"
+		styleClass="{totals>/Holiday6}"
+		visible="false">
+		<Text text="{i18n>Day6_S}"/>
+		<footer><ObjectNumber  id="onDay6"  number = "{totals>/Day6}"/></footer>
+	</Column>					
+	
+	<Column 
+		hAlign="sap.ui.core.TextAlign.Center"
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		mergeDuplicates="true"
+		id="Day7" minScreenWidth="Phone" 
+		demandPopin="true"
+		visible="false">
+		<Text text="{i18n>Day7_S}"/>
+		<footer><ObjectNumber  id="onDay7" number = "{totals>/Day7}"/></footer>
+	</Column>	
+	
+<!-- 	<Column 
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		minScreenWidth="Phone" 
+		demandPopin="false"
+		visible="true">
+	</Column> -->
+	
+	<Column 
+		width="{= ${device>/system/phone} ? '' : '5%'}" 
+		minScreenWidth="Phone" 
+		demandPopin="false"
+		visible="true">
+	</Column>
+</core:FragmentDefinition>

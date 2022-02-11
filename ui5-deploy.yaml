@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "2.4"
+metadata:
+  name: hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          destination: SAD_025
+          url: http://127.0.1.10:8000
+          client: "025"
+          auth: basic
+        credentials:
+          username: env:XYZ_USER
+          password: env:XYZ_PASSWORD
+        app:
+          name: ZHCMFAB_MY_TIME
+          description: Tuile Saisie temps - Amélioré
+          package: ZFIORI
+          transport: SADK903921

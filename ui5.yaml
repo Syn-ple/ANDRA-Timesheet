@@ -1,0 +1,32 @@
+specVersion: "2.4"
+metadata:
+  name: hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false
+        backend:
+          - path: /sap
+            url: https://127.0.1.10:44300
+            client: "025"
+            destination: SAD_025
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+          version: 1.71.38
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        component: hcm.fab.mytimesheet.HCMFAB_MY_TIMEExtension
+        ui5Theme: sap_fiori_3

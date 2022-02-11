@@ -1,0 +1,228 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ColumnListItem id = "timeListItem" highlight = "{path : 'json>Weekstatus',formatter: '.formatter.statusHighlight'}">
+		<cells>
+			<Select
+								valueState = "{path : 'json>Awart',formatter: '.formatter.awartValueState'}"
+								forceSelection="false"
+								resetOnMissingKey = "false"
+								enabled="{controls>/overviewEditable}"
+								editable='{json>AllowEdit}'
+								selectedKey="{json>Awart}"
+								items="{
+									path : 'json>/ZV_CAT_PRES_VH',
+									templateShareable: false
+        						}"
+        						change = ".onPresenceChange"
+        						valueStateText = "Catég. de présence non utilisable sur cette appliaction"
+								>
+								
+								<core:Item 
+									key		=	'{json>CategoriePresence}'
+									text	=	'{json>CategoriePresence} - {json>Description}'
+								/>
+								
+			</Select>
+									<!-- textFormatter: this.formatter.EOTP_OUTPUT.bind(this), -->
+									<!-- 						value = "{= ${json>Rproj}  === '00000000' ? '' : ${json>Rproj} }" -->
+									
+			<Input
+			placeholder = "Élement d'OTP"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			showValueHelp="true"
+			suggestionRows="{json>/ZC_WBSElementVH}">
+			<suggestionColumns>
+				<Column
+					popinDisplay="Inline"
+					demandPopin="true">
+					<Label text="Élement d'OTP" />
+				</Column>
+				<Column
+					hAlign="Center"
+					popinDisplay="Inline"
+					demandPopin="true"
+					minScreenWidth="Tablet">
+					<Label text="Description" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{json>WBSElement}" />
+					<Label text="{json>WBSDescription}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>									
+									
+<!-- 			<Input
+						enabled = "{controls>/overviewEditable}"
+						placeholder = "Élement d'OTP"
+						editable = "{json>AllowEdit}"
+						visible = "{path : 'json>Awart',formatter: '.formatter.isWBSEditableByCat'}"
+						
+						valueHelpRequest = "onWBSValueHelpRequested"
+						showValueHelp = "true"
+						
+						value = "{json>Rproj}"
+						
+						suggest="handleSuggest" 
+						
+						change = "onWBSChange"
+						
+						valueStateText = "Veuillez saisir un élément d'OTP"
+						valueState = "{parts: [ {'json>Awart'},{'json>Rproj'} ],formatter: '.formatter.rprojValueState'}"
+						
+						showSuggestion="true"
+						autocomplete="true"
+						startSuggestion="0"
+						
+						suggestionItems="{
+							path: 'json>/ZC_WBSElementVH',
+							sorter: { path: 'json>WBSElement' },
+							length: 5
+						}">
+						
+						<suggestionItems>
+							<core:Item text = "{json>WBSElement}"/>
+						</suggestionItems>
+			</Input> -->
+			<Input
+						type = "sap.m.InputType.Number"
+						maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day1',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+						maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day2',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day3',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day4',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day5',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day6',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Input
+						type = "sap.m.InputType.Number"
+												maxLength = "2"
+						editable = "{json>AllowEdit}"
+						enabled = "{controls>/overviewEditable}"
+						placeholderSymbol = " "
+						value = "{path : 'json>Day7',formatter: '.formatter.parseInt'}"
+						change = ".onHoursChange"
+						liveChange=".forceIntegerInput"
+			/>
+			
+			<Button		
+						icon = "{path: 'json>LongText',formatter: '.formatter.longtextButtons'}"
+						visible = "{path : 'json>Weekstatus',formatter: '.formatter.isRowDeletable'}"
+						enabled = "{controls>/overviewEditable}"
+						type = "sap.m.ButtonType.Transparent"
+						press = "longtextPopover"
+			/>
+			
+			<Button		
+						icon = "sap-icon://sys-cancel"
+						visible = "{path : 'json>Weekstatus' ,formatter: '.formatter.isRowDeletable'}"
+						type = "sap.m.ButtonType.Reject"
+						enabled = "{controls>/overviewEditable}"
+						press = "removePopover"
+			/>
+
+			
+<!-- 					new sap.m.Input({
+
+						/*
+						suggestionItems : {
+							path: "/ZC_WBSElementVH",
+							sorter: { path: 'WBSElement' },
+							template: new sap.ui.core.Item({
+								key: "{WBSElement}",
+								text : "{WBSDescription}",
+							}),
+							templateShareble
+						},
+						*/
+						filterSuggests: true, // boolean
+						//maxSuggestionWidth: "70%", // sap.ui.core.CSSSize, since 1.21.1
+						//fieldWidth: "100%", // sap.ui.core.CSSSize
+						suggest : this.handleSuggest.bind(this),
+						suggestionColumns:[
+							new sap.m.Column({ header: new sap.m.Label({
+								text: "Favoris"
+							}) }),
+							new sap.m.Column({ header: new sap.m.Label({
+								text: "eOTP"
+							}) }),
+							new sap.m.Column({ header: new sap.m.Label({
+								text: "Description"
+							}) })
+						],
+						suggestionRows: {
+							path: "/ZC_WBSElementVH",
+							template: new sap.m.ColumnListItem({
+							cells: [
+								new sap.m.Button({ icon: "sap-icon://favorite" }),
+								new sap.m.Label({ text : "{WBSElement}" }),
+								new sap.m.Label({ text : "{WBSDescription}" }),
+								]
+							})
+						}
+					}),
+			
+			
+			 -->
+		</cells>
+	</ColumnListItem>
+</core:FragmentDefinition>
